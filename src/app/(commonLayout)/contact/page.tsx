@@ -2,6 +2,7 @@ import React from 'react'
 
 export default function ContactPage() {
   return (
-    <div>contact Page </div>
+    <div className='container mx-auto'>
+      contact Page </div>
   )
 }
