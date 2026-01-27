@@ -1,11 +1,9 @@
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import React from "react";
 
-export default function Home() {
+export default function page() {
   return (
     <div className="container mx-auto">
-      <Button>click</Button>
-      <h1>Welcome to the Blog Site</h1>
+      <h1 className="text-2xl font-bold">Home page</h1>
     </div>
   );
 }
