@@ -41,7 +41,7 @@ const Footer = ({
       title: "Product",
       links: [
         { text: "Overview", url: "#" },
-        { text: "Pricing", url: "#" },       
+        { text: "Pricing", url: "#" },
       ],
     },
     {
@@ -49,7 +49,7 @@ const Footer = ({
       links: [
         { text: "About", url: "#" },
         { text: "Team", url: "#" },
-        { text: "Blog", url: "#" },       
+        { text: "Blog", url: "#" },
       ],
     },
     {
@@ -126,4 +126,4 @@ const Footer = ({
   );
 };
 
-export { Footer};
+export { Footer };
