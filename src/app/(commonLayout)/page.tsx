@@ -3,7 +3,16 @@ import { blogService } from "@/services/blog.service";
 import { BlogPost } from "@/types";
 
 export default async function page() {
-  const { data } = await blogService.getBlogPosts();
+  const { data } = await blogService.getBlogPosts(
+    {
+      isFeatured: false,
+    },
+    {
+      cache: "no-store",
+    },
+  );
+
+  console.log("Featured blog posts:", data);
 
   return (
     <div className="grid grid-cols-3 max-w-7xl mx-auto px-4 gap-6">
