@@ -1,14 +1,15 @@
-import { userService } from "@/services/user.services";
+import BlogCard from "@/components/modules/homepage/BlogCard";
+import { blogService } from "@/services/blog.service";
+import { BlogPost } from "@/types";
 
 export default async function page() {
-  const {data, error} = await userService.getSession();
-
-  console.log("Session Data:", data);
-  console.log("Session Error:", error);
+  const { data } = await blogService.getBlogPosts();
 
   return (
-    <div className="container mx-auto">
-      <h1 className="text-3xl font-bold underline">Common Layout hOme Page</h1>
+    <div className="grid grid-cols-3 max-w-7xl mx-auto px-4 gap-6">
+      {data?.data?.map((post: BlogPost) => (
+        <BlogCard key={post.id} post={post} />
+      ))}
     </div>
   );
 }
