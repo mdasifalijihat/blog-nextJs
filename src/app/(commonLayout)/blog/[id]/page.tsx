@@ -1,5 +1,13 @@
 import { Separator } from "@/components/ui/separator";
 import { blogService } from "@/services/blog.service";
+import { BlogPost } from "@/types";
+
+export const dynamicParams = false; // true | false
+
+export async function generateStaticParams() {
+  const { data } = await blogService.getBlogPosts();
+  return data?.data?.map((blog: BlogPost) => ({ id: blog.id })).splice(0, 3);
+}
 
 export default async function BlogPage({
   params,

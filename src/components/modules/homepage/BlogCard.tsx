@@ -1,4 +1,3 @@
-
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -46,16 +45,16 @@ export default function BlogCard({ post }: { post: BlogPost }) {
         <div className="flex flex-wrap items-center p-2 ">
           {/* Tags */}
           {post.tags?.length && post.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {post.tags.map((tag: string, index: number) => (
+            <div className="flex flex-wrap gap-2">
+              {post.tags.map((tag: string, index: number) => (
                 <span
                   key={index}
                   className="bg-white px-2 py-1 rounded text-xs font-medium border border-gray-300"
                 >
                   {tag}
                 </span>
-          ))}
-        </div>
+              ))}
+            </div>
           )}
         </div>
       </CardContent>
@@ -66,12 +65,12 @@ export default function BlogCard({ post }: { post: BlogPost }) {
         {/* Stats: comments & views */}
         <div className="flex items-center text-sm text-muted-foreground ml-2 gap-3">
           <div className="flex items-center">
-            <MessageSquare className="h-4 w-4 mr-1" />
-            {post._count?.comments ?? 0}
-          </div>
-          <div className="flex items-center">
             <Eye className="h-4 w-4 mr-1" />
             {post.views}
+          </div>
+          <div className="flex items-center">
+            <MessageSquare className="h-4 w-4 mr-1" />
+            {post._count?.comments ?? 0}
           </div>
         </div>
         {/* Read More button */}
@@ -81,7 +80,6 @@ export default function BlogCard({ post }: { post: BlogPost }) {
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
-   
       </CardFooter>
     </Card>
   );

@@ -2,7 +2,7 @@ import BlogCard from "@/components/modules/homepage/BlogCard";
 import { blogService } from "@/services/blog.service";
 import { BlogPost } from "@/types";
 
-export default async function page() {
+export default async function HomePage() {
   const { data } = await blogService.getBlogPosts(
     {
       isFeatured: false,
@@ -12,7 +12,7 @@ export default async function page() {
     },
   );
 
-  console.log("Featured blog posts:", data);
+  // console.log("Featured blog posts:", data);
 
   return (
     <div className="grid grid-cols-3 max-w-7xl mx-auto px-4 gap-6">
