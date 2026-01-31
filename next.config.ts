@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
       "images.unsplash.com",
       "res.cloudinary.com",
       "www.bigfootdigital.co.uk",
+      "encrypted-tbn0.gstatic.com",
+      
+      
     ],
   },
 };

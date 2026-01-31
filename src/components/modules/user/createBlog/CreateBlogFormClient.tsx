@@ -1,4 +1,6 @@
 "use client";
+
+import { createBlogPost } from "@/actions/blog.action";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,59 +17,66 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
+import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "@tanstack/react-form";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import * as z from "zod";
+import { z } from "zod";
 
-const formSchema = z.object({
-  name: z.string().min(4, "Name must be at least 4 characters required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  email: z.email("Invalid email address"),
+const blogSchema = z.object({
+  title: z
+    .string()
+    .min(3, "Title must be at least 3 characters")
+    .max(200, "Title must be less than 200 characters"),
+  content: z
+    .string()
+    .min(10, "Content must be at least 10 characters")
+    .max(5000, "Content must be less than 5000 characters"),
+  tags: z.string(),
 });
 
-export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
-  const router = useRouter();
+export function CreateBlogFormClient() {
   const form = useForm({
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
+      title: "",
+      content: "",
+      tags: "",
     },
     validators: {
-      onSubmit: formSchema,
+      onSubmit: blogSchema,
     },
     onSubmit: async ({ value }) => {
-      const toastId = toast.loading("Creating your account...");
+      const toastId = toast.loading("Creating....");
+
+      const blogData = {
+        title: value.title,
+        content: value.content,
+        tags: value.tags
+          .split(",")
+          .map((item) => item.trim())
+          .filter((item) => item !== ""),
+      };
+
+      console.log(blogData);
 
       try {
-        const { data, error } = await authClient.signUp.email(value);
-        if (error) {
-          toast.error(error.message, { id: toastId });
+        const res = await createBlogPost(blogData);
+
+        console.log(res);
+
+        if (res.error) {
+          toast.error(res.error.message, { id: toastId });
           return;
         }
-        toast.success("Account created successfully!", { id: toastId });
-        router.push("/dashboard");
-      } catch (error) {
-        toast.error("Failed to create account", { id: toastId });
-        return;
+
+        toast.success("Post Created", { id: toastId });
+      } catch (err) {
+        toast.error("Something Went Wrong", { id: toastId });
       }
     },
   });
 
-  // Handle Google login
-  // Handle Google login
-  const handleGoogleLogin = async () => {
-    const data = await authClient.signIn.social({
-      provider: "google",
-      callbackURL: "http://localhost:3000",
-    });
-    console.log("Google login data:", data);
-  };
-
   return (
-    <Card {...props}>
+    <Card className="w-full max-w-2xl">
       <CardHeader>
         <CardTitle>Create an account</CardTitle>
         <CardDescription>
@@ -76,28 +85,28 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
       </CardHeader>
       <CardContent>
         <form
-          id="login-form"
+          id="blog-post"
           onSubmit={(e) => {
             e.preventDefault();
-            form.handleSubmit(e);
+            form.handleSubmit();
           }}
-          className="space-y-4"
         >
           <FieldGroup>
             <form.Field
-              name="name"
+              name="title"
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>Title</FieldLabel>
                     <Input
                       type="text"
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="Blog Title"
                     />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
@@ -107,19 +116,19 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               }}
             />
             <form.Field
-              name="email"
+              name="content"
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                    <Input
-                      type="email"
+                    <FieldLabel htmlFor={field.name}>Content</FieldLabel>
+                    <Textarea
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="Write your blog"
                     />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
@@ -129,19 +138,22 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
               }}
             />
             <form.Field
-              name="password"
+              name="tags"
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid;
                 return (
                   <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                    <FieldLabel htmlFor={field.name}>
+                      Tags (comma separated)
+                    </FieldLabel>
                     <Input
-                      type="password"
+                      type="text"
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="nextjs, web"
                     />
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
@@ -153,20 +165,10 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
           </FieldGroup>
         </form>
       </CardContent>
-      <CardFooter className="flex flex-col justify-end">
-        <Field>
-          <Button form="login-form" type="submit">
-            Sign Up
-          </Button>
-
-          <Button
-            onClick={() => handleGoogleLogin()}
-            variant="outline"
-            type="button"
-          >
-            Continue with Google
-          </Button>
-        </Field>
+      <CardFooter className="flex flex-col">
+        <Button form="blog-post" type="submit" className="w-full">
+          Submit
+        </Button>
       </CardFooter>
     </Card>
   );
