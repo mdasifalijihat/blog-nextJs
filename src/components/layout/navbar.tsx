@@ -21,6 +21,9 @@ import {
 } from "@/components/ui/sheet";
 import Link from "next/link";
 import { ModeToggle } from "./ModeToggle";
+import { authClient } from "@/lib/auth-client";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import Image from "next/image";
 
 interface MenuItem {
   title: string;
@@ -79,6 +82,9 @@ const Navbar = ({
   },
   className,
 }: Navbar1Props) => {
+
+  const { data: session, isPending } = authClient.useSession();
+  const user = session?.user;
   return (
     <section className={cn("py-4", className)}>
       <div className="container mx-auto">
@@ -97,12 +103,36 @@ const Navbar = ({
           </div>
           <div className="flex gap-2">
             <ModeToggle />
-            <Button asChild variant="outline" size="sm">
+            {/* <Button asChild variant="outline" size="sm">
               <Link href={auth.login.url}>{auth.login.title}</Link>
             </Button>
             <Button asChild size="sm">
               <Link href={auth.signup.url}>{auth.signup.title}</Link>
-            </Button>
+            </Button> */}
+
+            {isPending ? null : user ? (
+              <Link href="/profile">
+                <Avatar className="h-8 w-8 cursor-pointer">                
+                    <Image
+                      src={session.user.image ?? "/avatar.png"}
+                      alt="User"
+                      width={36}
+                      height={36}
+                      className="rounded-full cursor-pointer"
+                    />
+                    {user.name?.charAt(0).toUpperCase()}                  
+                </Avatar>
+              </Link>
+            ) : (
+              <>
+                <Button asChild variant="outline" size="sm">
+                  <Link href={auth.login.url}>{auth.login.title}</Link>
+                </Button>
+                <Button asChild size="sm">
+                  <Link href={auth.signup.url}>{auth.signup.title}</Link>
+                </Button>
+              </>
+            )}
           </div>
         </nav>
 
@@ -132,12 +162,34 @@ const Navbar = ({
 
                   <div className="flex flex-col gap-3">
                     <ModeToggle />
-                    <Button asChild variant="outline">
+                    {/* <Button asChild variant="outline">
                       <Link href={auth.login.url}>{auth.login.title}</Link>
                     </Button>
                     <Button asChild>
                       <Link href={auth.signup.url}>{auth.signup.title}</Link>
-                    </Button>
+                    </Button> */}
+
+                    {isPending ? null : user ? (
+                      <Link href="/profile" className="flex items-center gap-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarFallback>
+                            {user.name?.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span>Profile</span>
+                      </Link>
+                    ) : (
+                      <>
+                        <Button asChild variant="outline">
+                          <Link href={auth.login.url}>{auth.login.title}</Link>
+                        </Button>
+                        <Button asChild>
+                          <Link href={auth.signup.url}>
+                            {auth.signup.title}
+                          </Link>
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
               </SheetContent>

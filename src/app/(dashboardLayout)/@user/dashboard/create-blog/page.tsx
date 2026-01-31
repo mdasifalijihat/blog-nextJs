@@ -8,7 +8,7 @@ export default async function CreateBlogPage() {
   const { data } = await blogService.getBlogPosts({},{cache: "no-store"});
 
   return (
-    <div>
+    <div className="pt-12">
       {/* <CreateBlogFormServer /> */}
       <CreateBlogFormClient/>
 

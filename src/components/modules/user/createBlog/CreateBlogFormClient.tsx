@@ -32,6 +32,7 @@ const blogSchema = z.object({
     .min(10, "Content must be at least 10 characters")
     .max(5000, "Content must be less than 5000 characters"),
   tags: z.string(),
+  thumbnail: z.string().url("Thumbnail must be a valid image URL"),
 });
 
 export function CreateBlogFormClient() {
@@ -40,6 +41,7 @@ export function CreateBlogFormClient() {
       title: "",
       content: "",
       tags: "",
+      thumbnail: "",
     },
     validators: {
       onSubmit: blogSchema,
@@ -50,6 +52,7 @@ export function CreateBlogFormClient() {
       const blogData = {
         title: value.title,
         content: value.content,
+        thumbnail: value.thumbnail,
         tags: value.tags
           .split(",")
           .map((item) => item.trim())
@@ -76,7 +79,7 @@ export function CreateBlogFormClient() {
   });
 
   return (
-    <Card className="w-full max-w-2xl">
+    <Card className="w-full max-w-md pt-12 mx-auto">
       <CardHeader>
         <CardTitle>Create an account</CardTitle>
         <CardDescription>
@@ -155,6 +158,34 @@ export function CreateBlogFormClient() {
                       onChange={(e) => field.handleChange(e.target.value)}
                       placeholder="nextjs, web"
                     />
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                );
+              }}
+            />
+            <form.Field
+              name="thumbnail"
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid;
+
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>
+                      Thumbnail Image URL
+                    </FieldLabel>
+
+                    <Input
+                      type="url"
+                      id={field.name}
+                      name={field.name}
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="https://example.com/image.jpg"
+                    />
+
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}
